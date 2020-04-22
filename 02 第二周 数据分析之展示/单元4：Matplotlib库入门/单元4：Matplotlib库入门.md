@@ -1,6 +1,6 @@
 [TOC]
 
-# 本周课程导学
+本周课程导学
 
 ## 学习内容
 
@@ -286,4 +286,241 @@ plt.show()
 # pyplot的中文显示
 
 pyplot默认不支持中文，如果想要显示中文，需要添加额外的代码辅助
+
+## 修改`rcParams`字体实现
+
+例子：
+
+```python
+import matplotlib.pyplot as plt
+
+matplotlib.rcParams['font.family'] = 'SimHei'
+plt.plot([3, 1, 4, 5, 2])
+plt.ylabel("纵轴(值)")
+plt.savefig('test', dpi=600)
+plt.show()
+```
+
+`SimHei`是黑体
+
+### `rcParams`的属性
+
+| 属性          | 说明                                    |
+| ------------- | --------------------------------------- |
+| `font.family` | 用于显示字体的名字，如`SimHei`          |
+| `font.style`  | 字体风格，正常`normal`或斜体`italic`    |
+| `font.size`   | 字体大小，整数字号或者`large`、`xsmall` |
+
+### `font.family`中文字体
+
+| 中文字体   | 说明     |
+| ---------- | -------- |
+| `SimHei`   | 中文黑体 |
+| `Kaiti`    | 中文楷体 |
+| `LiSu`     | 中文隶书 |
+| `FangSong` | 中文仿宋 |
+| `YouYuan`  | 中文幼圆 |
+| `STSong`   | 华文宋体 |
+
+## 示例：显示正弦波
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib
+
+matplotlib.rcParams['font.family']='STSong'
+matplotlib.rcParams['font.size']=20
+
+a = np.arange(0.0, 5.0, 0.02)
+plt.xlabel('横轴：时间')
+plt.ylabel('纵轴：振幅')
+plt.plot(a, np.cos(2*np.pi*a), 'r--')
+plt.show()
+
+```
+
+这种方法改变的是全局字体
+
+
+
+## 增加属性`fontproperties`
+
+如果只希望在某一个地方有中文输出，不想改变其它的输出（建议使用），可以在有中文输出的地方，增加一个属性：`fontproperties`
+
+### 示例：绘制正弦波
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+a = np.arange(0.0, 5.0, 0.02)
+
+plt.xlabel('横轴：时间', fontproperties='SimHei', fontsize=20)
+plt.ylabel('纵轴：振幅', fontproperties='SimHei', fontsize=20)
+plt.plot(a, np.cos(2*np.pi*a), 'r--')
+plt.show()
+
+```
+
+这里的黑体仅对`xlabel`起作用，而不影响其它的文本，比如y轴或坐标系
+
+
+
+****
+
+# pyplot的文本显示
+
+## pyplot的文本显示函数
+
+| 函数             | 说明                     |
+| ---------------- | ------------------------ |
+| `plt.xlabel()`   | 对X轴增加文本标签        |
+| `plt.ylabel()`   | 对Y轴增加文本标签        |
+| `plt.title()`    | 对图形整体增加文本标签   |
+| `plt.text()`     | 在任意位置增加文本       |
+| `plt.annotate()` | 在图形中增加带箭头的注解 |
+
+### 示例：绘制正弦波
+
+专业的表示，有标示和注释
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+a = np.arange(0.0, 5.0, 0.02)
+plt.plot(a, np.cos(2*np.pi*a), 'r--')
+
+plt.xlabel('横轴：时间', fontproperties='SimHei', fontsize=15, color='green')
+plt.ylabel('纵轴：振幅', fontproperties='SimHei', fontsize=15)
+plt.title(r'正弦波实例 $y=cos(2\pi x)$', fontproperties='SimHei', fontsize=25)
+plt.text(2, 1, r'$\mu=100$', fontsize=15)
+
+plt.axis([-1, 6, -2, 2])
+plt.grid(True)
+plt.show()
+
+```
+
+`r'正弦波实例 $y=cos(2\pi x)$'`加上标题
+
+双`$`标识，是Latex语法，可以表示公式
+
+`plt.text(2, 1, r'$\mu=100$', fontsize=15)`
+
+在对应坐标的位置显示文本
+
+`plt.axis([-1, 6, -2, 2])`
+
+设定坐标范围
+
+
+
+## annotate函数
+
+`plt.annotate(s, xy=arrpw_crd, xytext=text_crd, arrowprops=dict)`
+
+`s`是需要显示的字符串
+
+`xy`是箭头所在位置	
+
+`xytext`表示文本显示的位置
+
+`arrowprps`是一个字典类型定义了整个箭头显示的属性
+
+### 实例
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+a = np.arange(0.0, 5.0, 0.02)
+plt.plot(a, np.cos(2*np.pi*a), 'r--')
+
+plt.xlabel('横轴：时间', fontproperties='SimHei', fontsize=15, color='green')
+plt.ylabel('纵轴：振幅', fontproperties='SimHei', fontsize=15)
+plt.title(r'正弦波实例 $y=cos(2\pi x)$', fontproperties='SimHei', fontsize=25)
+plt.annotate( r'$\mu=100$', xy=(2,1), xytext=(3, 1.5),
+              arrowprops=dict(facecolor='black', shrink=0.1, width=2))
+
+plt.axis([-1, 6, -2, 2])
+plt.grid(True)
+plt.show()
+
+```
+
+annotate函数的参数分别是：字符串，箭头位置，备注位置，备注属性
+
+其中备注属性分别是：箭头颜色，缩进比例，宽度
+
+缩进比例指的是箭头两端和指定位置的距离，有的时候不希望箭头直接指到对应位置上，所以要留出一段空白（缩进小于0.5是箭头头部留出空白，大于0.5是尾部留出空白）
+
+更多关于注释的说明，可参考：
+
+`https://blog.csdn.net/u013457382/article/details/50956459`
+
+****
+
+
+
+# pyplot的子绘图区域
+
+## `subplot`函数
+
+只能简单分割绘图区域，如果想要在自定义的复杂绘图区域绘制图形需要使用辅助函数`plt.subplot2grid()`
+
+`plt.subplot2grid(GridSpec, CurSpec, colspan=1, rowspan=1)`
+
+理念：设定网络，选中网络，确定选中行列区数量，编号从0开始
+
+### 例子
+
+```python
+plt.subplot2grid((3,3),(1,0),colspan=2)
+```
+
+第一个参数元组(3,3)表示将一个区域分割成3x3的网格形状
+
+第二个参数(1,0)表示当前为subplot选定的位置在第1行第0列
+
+第三个参数`colspan`表示列的延伸，也就是从选定位置开始，在列的方向上延伸两个长度，也就是选定的位置以及选定位置右侧两个长度的位置（同理也有`rowspan`）
+
+如果在`plt.subplot2grid`后面加上绘制图形的函数，那么这个图形就会在这个区域显示出来
+
+之后可以再调用`subplot2grid`，改变新的位置，切换到新的区域
+
+
+
+##  `GridSpec`类
+
+避免每次都重新定义分割区域
+
+`GridSpec`是`Matplotlib`中一个专门用于子区域设定的类
+
+```python
+import matplotlib.gridspec as gridspec
+
+gs = gridspec.GridSpec(3,3)
+
+ax1 = plt.subplot(gs[0, :]) % 在第一行，占全部列
+ax2 = plt.subplot(gs[1, :-1]) % 在第二行，到倒数第二列为止
+ax3 = plt.subplot(gs[1:, -1])
+ax4 = plt.subplot(gs[2, 0])
+ax5 = plt.subplot(gs[2, 1])
+```
+
+****
+
+
+
+# 单元小结
+
+介绍了pyplot子库的基本使用
+
++ 如何绘制一个坐标系，以及如何确定一个曲线的风格
++ 进一步讲解了在绘制区域中，如何形成子绘制区域的方法，`subplot`和`subplot2grid`函数
++ 介绍了如何在绘制图中增加文本显示和增加中文显示的方法
+
+关键：选取恰当的图形展示数据含义
 
